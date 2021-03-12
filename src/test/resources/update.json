@@ -1,0 +1,42 @@
+{
+  "update_id": 301150296,
+  "message": {
+    "superGroupMessage": false,
+    "chatId": 1360362063,
+    "userMessage": true,
+    "reply": false,
+    "groupMessage": false,
+    "channelMessage": false,
+    "command": true,
+    "message_id": 15,
+    "from": {
+      "bot": false,
+      "id": 1360362063,
+      "first_name": "V",
+      "is_bot": false,
+      "last_name": "K",
+      "username": "VK_darknet",
+      "language_code": "ru"
+    },
+    "date": 1615224421,
+    "chat": {
+      "userChat": true,
+      "channelChat": false,
+      "groupChat": false,
+      "superGroupChat": false,
+      "id": 1360362063,
+      "type": "private",
+      "first_name": "V",
+      "last_name": "K",
+      "username": "VK_darknet"
+    },
+    "text": "hello",
+    "entities": [
+      {
+        "type": "bot_command",
+        "offset": 0,
+        "length": 6
+      }
+    ]
+  }
+}
