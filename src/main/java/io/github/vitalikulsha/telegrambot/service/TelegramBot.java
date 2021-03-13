@@ -42,7 +42,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         SendMessage sendMessageService = messageService.onUpdateReceived(update);
         sendMessage.setReplyMarkup(keyboardButtonMessage.replyKeyboardMarkup);
-        sendMessage.setText(keyboardButtonMessage.getMessage(update.getMessage().getText()));
+        sendMessage.setText(keyboardButtonMessage.getMessage(update));
         try {
 
             execute(sendMessage);

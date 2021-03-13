@@ -27,8 +27,7 @@ public class KeyboardButtonMessage {
     private String numberPhone;
 
 
-    public String getMessage(String msg) {
-        SendMessage sendMessage = new SendMessage();
+    public String getMessage(Update update) {
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow keyboardFirstRow = new KeyboardRow();
         KeyboardRow keyboardSecondRow = new KeyboardRow();
@@ -37,7 +36,8 @@ public class KeyboardButtonMessage {
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboard(false);
-
+        String msg = update.getMessage().getText();
+        //numberPhone = update.getMessage().getContact().getPhoneNumber();
         if (msg.equals("/start")) {
             keyboard.clear();
             keyboardFirstRow.add("Заказать билет");
@@ -187,7 +187,7 @@ public class KeyboardButtonMessage {
             return "Доступных билетов нет.";
         }
 
-       /* if (msg.equals("0")) {
+        if (msg.equals("0")) {
             ticketList.remove(0);
             return "Бронь снята";
         }
@@ -198,7 +198,7 @@ public class KeyboardButtonMessage {
         if (msg.equals("2")) {
             ticketList.remove(0);
             return "Бронь снята";
-        }*/
+        }
 
         if (msg.equals("Помощь")) {
             return HELP;
