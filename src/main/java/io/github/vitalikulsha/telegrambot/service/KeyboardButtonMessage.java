@@ -9,7 +9,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.*;
 
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -19,15 +21,18 @@ import static io.github.vitalikulsha.telegrambot.util.TextMessageUtil.*;
 @Service
 public class KeyboardButtonMessage {
     ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-    private String string = "Выберите из предложенного меню.\u2B07\u2B07\u2B07\u2B07\u2B07";
+    private String string = "Выбери из предложенного меню.\u2B07";
+    Map<Long, List<Ticket>> ticketsUser = new HashMap<>();
     List<Ticket> ticketList = new ArrayList<>();
     private String route;
     private String date;
     private String time;
     private String numberPhone;
+    private long chatId;
 
 
     public String getMessage(Update update) {
+        //List<Ticket> ticketList = new ArrayList<>();
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow keyboardFirstRow = new KeyboardRow();
         KeyboardRow keyboardSecondRow = new KeyboardRow();
@@ -38,7 +43,9 @@ public class KeyboardButtonMessage {
         replyKeyboardMarkup.setOneTimeKeyboard(false);
         String msg = update.getMessage().getText();
         //numberPhone = update.getMessage().getContact().getPhoneNumber();
-        if (msg.equals("/start")) {
+
+
+        if (msg.equals("/start") || msg.equalsIgnoreCase("Меню")) {
             keyboard.clear();
             keyboardFirstRow.add("Заказать билет");
             keyboardFirstRow.add("Мои билеты");
@@ -53,34 +60,37 @@ public class KeyboardButtonMessage {
             return string;
         }
 
-        //return numberPhone;
-//        if (msg.equals("Отправить контакт")) {
-//            numberPhone = update.getMessage().getContact().getPhoneNumber();
-//            System.out.println(update.getMessage().getContact().getPhoneNumber());
-//            return numberPhone;
-//        }
-
-        if (msg.equalsIgnoreCase("Меню")) {
-            keyboard.clear();
-            //keyboardFirstRow.clear();
-            keyboardFirstRow.add("Заказать билет");
-            keyboardFirstRow.add("Мои билеты");
-            keyboardSecondRow.add("Отменить бронь");
-            keyboardSecondRow.add("Помощь");
-            keyboard.add(keyboardFirstRow);
-            keyboard.add(keyboardSecondRow);
-            replyKeyboardMarkup.setKeyboard(keyboard);
-            return string;
+        if (msg.equals("Отправить контакт")) {
+            chatId = update.getMessage().getChatId();
+            ticketsUser.put(chatId, ticketList);
+            //numberPhone = update.getMessage().getContact().getPhoneNumber();
+            //System.out.println("chatId = " + chatId);
+            return "ChatId отправлен";
         }
 
         if (msg.equals("Заказать билет")) {
             keyboard.clear();
-            //keyboardFirstRow.clear();
-            keyboardFirstRow.add("Выбор направления");
-            keyboardFirstRow.add("Меню");
-            keyboard.add(keyboardFirstRow);
-            replyKeyboardMarkup.setKeyboard(keyboard);
-            return string;
+            if (chatId != 0) {
+                List<Ticket> myTickets = ticketsUser.get(chatId);
+                if (myTickets.size() > 3) {
+                    keyboard.clear();
+                    keyboardFirstRow.add("Меню");
+                    keyboard.add(keyboardFirstRow);
+                    replyKeyboardMarkup.setKeyboard(keyboard);
+                    return "Превышен лимит доступных билетов";
+                } else {
+                    keyboardFirstRow.add("Выбор направления");
+                    keyboardFirstRow.add("Меню");
+                    keyboard.add(keyboardFirstRow);
+                    replyKeyboardMarkup.setKeyboard(keyboard);
+                    return string;
+                }
+            } else {
+                keyboardFirstRow.add("Меню");
+                keyboard.add(keyboardFirstRow);
+                replyKeyboardMarkup.setKeyboard(keyboard);
+                return "Отправь сначала контакт для заказа билета";
+            }
         }
 
         if (msg.equals("Выбор направления")) {
@@ -142,6 +152,7 @@ public class KeyboardButtonMessage {
             }
             Ticket ticket = new Ticket(route, date, time, 3.5);
             ticketList.add(ticket);
+            ticketsUser.put(chatId, ticketList);
             keyboard.clear();
             keyboardFirstRow.add("Меню");
             keyboard.add(keyboardFirstRow);
@@ -158,6 +169,7 @@ public class KeyboardButtonMessage {
             }
             Ticket ticket = new Ticket(route, date, time, 3.5);
             ticketList.add(ticket);
+            ticketsUser.put(chatId, ticketList);
             keyboard.clear();
             keyboardFirstRow.add("Меню");
             keyboard.add(keyboardFirstRow);
@@ -166,9 +178,10 @@ public class KeyboardButtonMessage {
         }
 
         if (msg.equals("Мои билеты")) {
-            if (ticketList.size() > 0) {
+            List<Ticket> myTickets = ticketsUser.get(chatId);
+            if (myTickets.size() > 0) {
                 StringBuilder str = new StringBuilder();
-                for (Ticket ticket : ticketList) {
+                for (Ticket ticket : myTickets) {
                     str.append(ticket.toString() + ";\n");
                 }
                 return str.toString();
@@ -177,32 +190,48 @@ public class KeyboardButtonMessage {
         }
 
         if (msg.equals("Отменить бронь")) {
-            if (ticketList.size() > 0) {
-                StringBuilder str = new StringBuilder("Выберите номер брони для отмены:\n");
-                for (int i = 0; i < ticketList.size(); i++) {
-                    str.append("[ " + i + " ] " + ticketList.get(i).toString() + ";\n");
+            List<Ticket> myTickets = ticketsUser.get(chatId);
+            if (myTickets.size() > 0) {
+                StringBuilder str = new StringBuilder("Введите номер брони для отмены:\n");
+                for (int i = 0; i < myTickets.size(); i++) {
+                    str.append("\'" + i + "\': " + myTickets.get(i).toString() + ";\n");
                 }
+                keyboard.clear();
+                for (int i = 0; i < myTickets.size(); i++) {
+                    keyboardFirstRow.add("Билет " + i);
+                }
+                keyboardSecondRow.add("Меню");
+                keyboard.add(keyboardFirstRow);
+                keyboard.add(keyboardSecondRow);
+                replyKeyboardMarkup.setKeyboard(keyboard);
                 return str.toString();
             }
             return "Доступных билетов нет.";
         }
 
-        if (msg.equals("0")) {
-            ticketList.remove(0);
-            return "Бронь снята";
-        }
-        if (msg.equals("1")) {
-            ticketList.remove(0);
-            return "Бронь снята";
-        }
-        if (msg.equals("2")) {
-            ticketList.remove(0);
+        if (numberTickets.contains(msg)) {
+            List<Ticket> myTickets = ticketsUser.get(chatId);
+            for (int i = 0; i < numberTickets.size(); i++) {
+                if (msg.equals(numberTickets.get(i))) {
+                    myTickets.remove(i);
+                }
+            }
+            ticketsUser.put(chatId, myTickets);
+            keyboard.clear();
+            keyboardFirstRow.add("Меню");
+            keyboard.add(keyboardFirstRow);
+            replyKeyboardMarkup.setKeyboard(keyboard);
             return "Бронь снята";
         }
 
         if (msg.equals("Помощь")) {
+            keyboard.clear();
+            keyboardFirstRow.add("Меню");
+            keyboard.add(keyboardFirstRow);
+            replyKeyboardMarkup.setKeyboard(keyboard);
             return HELP;
         }
+
         return "Я тебя не понял, попробуй еще раз!";
     }
 }

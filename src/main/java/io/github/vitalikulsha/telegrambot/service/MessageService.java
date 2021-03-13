@@ -1,6 +1,5 @@
 package io.github.vitalikulsha.telegrambot.service;
 
-import io.github.vitalikulsha.telegrambot.util.HolderTicket;
 import io.github.vitalikulsha.telegrambot.util.TextMessageUtil;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

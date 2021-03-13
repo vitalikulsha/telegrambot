@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class TextMessageUtil {
-    public static final String HELP = "Чат-бот поможет тебе заказать билет на маршрутку.";
+    public static final String HELP = "Чат-бот поможет тебе заказать билет на маршрутку.\n" +
+            "Возможности чат-бота:\n- заказать билет, но не более 4 шт. на один номер;\n" +
+            "- просмотреть заказанные билеты;\n" +
+            "- отменить ранее заказанные билеты.\n" +
+            "Билет можно заказать только после регистрации.";
     public static final String SETTINGS = "В будущем здесь будет что-то полезное.";
 
     Pattern pattern = Pattern.compile("");
@@ -41,6 +45,17 @@ public class TextMessageUtil {
             this.add("11:15");
             this.add("13:10");
             this.add("18:40");
+        }
+    };
+
+    public static List<String> numberTickets = new ArrayList<>() {
+        {
+            this.add("Билет 0");
+            this.add("Билет 1");
+            this.add("Билет 2");
+            this.add("Билет 3");
+            this.add("Билет 4");
+            this.add("Билет 5");
         }
     };
 
