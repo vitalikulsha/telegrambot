@@ -79,9 +79,11 @@ public class KeyboardButtonMessage {
                     replyKeyboardMarkup.setKeyboard(keyboard);
                     return "Превышен лимит доступных билетов";
                 } else {
-                    keyboardFirstRow.add("Выбор направления");
-                    keyboardFirstRow.add("Меню");
+                    keyboardFirstRow.add("Минск-Могилев");
+                    keyboardFirstRow.add("Могилев-Минск");
+                    keyboardSecondRow.add("Меню");
                     keyboard.add(keyboardFirstRow);
+                    keyboard.add(keyboardSecondRow);
                     replyKeyboardMarkup.setKeyboard(keyboard);
                     return string;
                 }
@@ -91,15 +93,6 @@ public class KeyboardButtonMessage {
                 replyKeyboardMarkup.setKeyboard(keyboard);
                 return "Отправь сначала контакт для заказа билета";
             }
-        }
-
-        if (msg.equals("Выбор направления")) {
-            keyboard.clear();
-            keyboardFirstRow.add("Минск-Могилев");
-            keyboardFirstRow.add("Могилев-Минск");
-            keyboard.add(keyboardFirstRow);
-            replyKeyboardMarkup.setKeyboard(keyboard);
-            return "Выбери направление из списка";
         }
 
         if (routeList.contains(msg)) {
