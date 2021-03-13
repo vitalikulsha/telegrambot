@@ -1,7 +1,7 @@
 package io.github.vitalikulsha.telegrambot.service;
 
 import io.github.vitalikulsha.telegrambot.util.HolderTicket;
-import io.github.vitalikulsha.telegrambot.util.TextMessage;
+import io.github.vitalikulsha.telegrambot.util.TextMessageUtil;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -23,11 +23,9 @@ public class MessageService {
                 } else if (messageText.equals("/settings")) {
                     return sendMessage.setText("Settings");
                 } else if (messageText.equals("Настройки")) {
-                    return sendMessage.setText(TextMessage.SETTINGS);
+                    return sendMessage.setText(TextMessageUtil.SETTINGS);
                 } else if (messageText.equals("Помощь")) {
-                    return sendMessage.setText(TextMessage.HELP);
-                } else if (messageText.equals("Мои билеты")) {
-                    return sendMessage.setText(new HolderTicket().holderTicket.toString());
+                    return sendMessage.setText(TextMessageUtil.HELP);
                 }
             }
         }

@@ -1,18 +1,20 @@
 package io.github.vitalikulsha.telegrambot.service;
 
-import com.google.common.base.Ticker;
-import io.github.vitalikulsha.telegrambot.util.HolderTicket;
 import io.github.vitalikulsha.telegrambot.util.Ticket;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.*;
 
-import static io.github.vitalikulsha.telegrambot.util.TextMessage.HELP;
+import org.telegram.telegrambots.meta.api.objects.Message;
+
+import static io.github.vitalikulsha.telegrambot.util.TextMessageUtil.*;
 
 @Service
 public class KeyboardButtonMessage {
@@ -22,8 +24,11 @@ public class KeyboardButtonMessage {
     private String route;
     private String date;
     private String time;
+    private String numberPhone;
+
 
     public String getMessage(String msg) {
+        SendMessage sendMessage = new SendMessage();
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow keyboardFirstRow = new KeyboardRow();
         KeyboardRow keyboardSecondRow = new KeyboardRow();
@@ -35,18 +40,25 @@ public class KeyboardButtonMessage {
 
         if (msg.equals("/start")) {
             keyboard.clear();
-            //keyboardFirstRow.clear();
             keyboardFirstRow.add("Заказать билет");
             keyboardFirstRow.add("Мои билеты");
             keyboardSecondRow.add("Отменить бронь");
             keyboardSecondRow.add("Помощь");
-            keyboardRequestRow.add(new KeyboardButton("Отправить контакт").setRequestContact(true));
+            keyboardRequestRow.add("Отправить контакт");
+            //keyboardRequestRow.add(new KeyboardButton("Отправить контакт").setRequestContact(true));
             keyboard.add(keyboardFirstRow);
             keyboard.add(keyboardSecondRow);
             keyboard.add(keyboardRequestRow);
             replyKeyboardMarkup.setKeyboard(keyboard);
             return string;
         }
+
+        //return numberPhone;
+//        if (msg.equals("Отправить контакт")) {
+//            numberPhone = update.getMessage().getContact().getPhoneNumber();
+//            System.out.println(update.getMessage().getContact().getPhoneNumber());
+//            return numberPhone;
+//        }
 
         if (msg.equalsIgnoreCase("Меню")) {
             keyboard.clear();
@@ -73,95 +85,61 @@ public class KeyboardButtonMessage {
 
         if (msg.equals("Выбор направления")) {
             keyboard.clear();
-            //keyboardFirstRow.clear();
             keyboardFirstRow.add("Минск-Могилев");
             keyboardFirstRow.add("Могилев-Минск");
             keyboard.add(keyboardFirstRow);
             replyKeyboardMarkup.setKeyboard(keyboard);
-            return "Выбери направление";
+            return "Выбери направление из списка";
         }
 
-        if (msg.equals("Минск-Могилев")) {
-            route = "Минск-Могилев";
+        if (routeList.contains(msg)) {
             keyboard.clear();
-            //keyboardFirstRow.clear();
-            keyboardFirstRow.add("08-03-2021");
-            keyboardFirstRow.add("09-03-2021");
-            keyboardSecondRow.add("10-03-2021");
-            keyboardSecondRow.add("11-03-2021");
+            if (routeList.get(0).equals(msg)) {
+                route = routeList.get(0);
+            } else if (routeList.get(1).equals(msg)) {
+                route = routeList.get(1);
+            }
+            keyboardFirstRow.add(dateList.get(0));
+            keyboardFirstRow.add(dateList.get(1));
+            keyboardSecondRow.add(dateList.get(2));
+            keyboardSecondRow.add(dateList.get(3));
             keyboard.add(keyboardFirstRow);
             keyboard.add(keyboardSecondRow);
             replyKeyboardMarkup.setKeyboard(keyboard);
-            return "Выбери дату отправления";
+            return "Выбери дату отправления из списка";
         }
 
-        if (msg.equals("Могилев-Минск")) {
-            route = "Могилев-Минск";
+        if (dateList.contains(msg)) {
             keyboard.clear();
-            //keyboardFirstRow.clear();
-            keyboardFirstRow.add("08-03-2021");
-            keyboardFirstRow.add("09-03-2021");
-            keyboardSecondRow.add("10-03-2021");
-            keyboardSecondRow.add("11-03-2021");
+            for (int i = 0; i < dateList.size(); i++) {
+                if (dateList.get(i).equals(msg)) {
+                    date = dateList.get(i);
+                }
+            }
+            if (route.equals(routeList.get(0))) {
+                keyboardFirstRow.add(timesMinsk.get(0));
+                keyboardFirstRow.add(timesMinsk.get(1));
+                keyboardSecondRow.add(timesMinsk.get(2));
+                keyboardSecondRow.add(timesMinsk.get(3));
+            } else if (route.equals(routeList.get(1))) {
+                keyboardFirstRow.add(timesMogilev.get(0));
+                keyboardFirstRow.add(timesMogilev.get(1));
+                keyboardSecondRow.add(timesMogilev.get(2));
+                keyboardSecondRow.add(timesMogilev.get(3));
+            }
             keyboard.add(keyboardFirstRow);
             keyboard.add(keyboardSecondRow);
             replyKeyboardMarkup.setKeyboard(keyboard);
-            return "Выбери дату отправления";
+            return "Выбери время отправления из списка";
         }
 
-        if (msg.equals("08-03-2021")) {
-            date = "08-03-2021";
+        if (timesMinsk.contains(msg) && route.equals(routeList.get(0))) {
             keyboard.clear();
-            keyboardFirstRow.add("10:20");
-            keyboardFirstRow.add("12:30");
-            keyboardSecondRow.add("14:40");
-            keyboardSecondRow.add("16:50");
-            keyboard.add(keyboardFirstRow);
-            keyboard.add(keyboardSecondRow);
-            replyKeyboardMarkup.setKeyboard(keyboard);
-            return "Выбери дату отправления";
-        }
-
-        if (msg.equals("09-03-2021")) {
-            date = "09-03-2021";
-            keyboard.clear();
-            keyboardFirstRow.add("10:20");
-            keyboardFirstRow.add("12:30");
-            keyboardSecondRow.add("14:40");
-            keyboardSecondRow.add("16:50");
-            keyboard.add(keyboardFirstRow);
-            keyboard.add(keyboardSecondRow);
-            replyKeyboardMarkup.setKeyboard(keyboard);
-            return "Выбери время отправления";
-        }
-
-        if (msg.equals("10-03-2021")) {
-            date = "10-03-2021";
-            keyboard.clear();
-            keyboardFirstRow.add("10:20");
-            keyboardFirstRow.add("12:30");
-            keyboardSecondRow.add("14:40");
-            keyboardSecondRow.add("16:50");
-            keyboard.add(keyboardFirstRow);
-            keyboard.add(keyboardSecondRow);
-            replyKeyboardMarkup.setKeyboard(keyboard);
-            return "Выбери время отправления";
-        }
-        if (msg.equals("11-03-2021")) {
-            date = "11-03-2021";
-            keyboard.clear();
-            keyboardFirstRow.add("10:20");
-            keyboardFirstRow.add("12:30");
-            keyboardSecondRow.add("14:40");
-            keyboardSecondRow.add("16:50");
-            keyboard.add(keyboardFirstRow);
-            keyboard.add(keyboardSecondRow);
-            replyKeyboardMarkup.setKeyboard(keyboard);
-            return "Выбери время отправления";
-        }
-
-        if (msg.equals("10:20")) {
-            time = "10:20";
+            for (int i = 0; i < timesMinsk.size(); i++) {
+                if (timesMinsk.get(i).equals(msg)) {
+                    time = timesMinsk.get(i);
+                }
+            }
             Ticket ticket = new Ticket(route, date, time, 3.5);
             ticketList.add(ticket);
             keyboard.clear();
@@ -171,30 +149,13 @@ public class KeyboardButtonMessage {
             return ticket.toString() + " - забронирован";
         }
 
-        if (msg.equals("12:30")) {
-            time = "12:30";
-            Ticket ticket = new Ticket(route, date, time, 3.5);
-            ticketList.add(ticket);
+        if (timesMogilev.contains(msg) && route.equals(routeList.get(1))) {
             keyboard.clear();
-            keyboardFirstRow.add("Меню");
-            keyboard.add(keyboardFirstRow);
-            replyKeyboardMarkup.setKeyboard(keyboard);
-            return ticket.toString() + " - забронирован";
-        }
-
-        if (msg.equals("14:40")) {
-            time = "14:40";
-            Ticket ticket = new Ticket(route, date, time, 3.5);
-            ticketList.add(ticket);
-            keyboard.clear();
-            keyboardFirstRow.add("Меню");
-            keyboard.add(keyboardFirstRow);
-            replyKeyboardMarkup.setKeyboard(keyboard);
-            return ticket.toString() + " - забронирован";
-        }
-
-        if (msg.equals("16:50")) {
-            time = "16:50";
+            for (int i = 0; i < timesMogilev.size(); i++) {
+                if (timesMogilev.get(i).equals(msg)) {
+                    time = timesMogilev.get(i);
+                }
+            }
             Ticket ticket = new Ticket(route, date, time, 3.5);
             ticketList.add(ticket);
             keyboard.clear();
@@ -226,7 +187,7 @@ public class KeyboardButtonMessage {
             return "Доступных билетов нет.";
         }
 
-        if (msg.equals("0")) {
+       /* if (msg.equals("0")) {
             ticketList.remove(0);
             return "Бронь снята";
         }
@@ -237,33 +198,11 @@ public class KeyboardButtonMessage {
         if (msg.equals("2")) {
             ticketList.remove(0);
             return "Бронь снята";
-        }
+        }*/
 
         if (msg.equals("Помощь")) {
             return HELP;
         }
-
         return "Я тебя не понял, попробуй еще раз!";
-    }
-
-
-    public synchronized void setButtons(SendMessage sendMessage) {
-        sendMessage.setReplyMarkup(replyKeyboardMarkup);
-        replyKeyboardMarkup.setSelective(true);
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(false);
-        List<KeyboardRow> keyboard = new ArrayList<>();
-        KeyboardRow keyboardRequestRow = new KeyboardRow();
-        keyboardRequestRow.add(new KeyboardButton("Отправить контакт").setRequestContact(true));
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
-        keyboardFirstRow.add(new KeyboardButton("Заказать билет"));
-        keyboardFirstRow.add(new KeyboardButton("Мои билеты"));
-        KeyboardRow keyboardSecondRow = new KeyboardRow();
-        keyboardSecondRow.add(new KeyboardButton("Отменить бронь"));
-        keyboardSecondRow.add(new KeyboardButton("Помощь"));
-        keyboard.add(keyboardRequestRow);
-        keyboard.add(keyboardFirstRow);
-        keyboard.add(keyboardSecondRow);
-        replyKeyboardMarkup.setKeyboard(keyboard);
     }
 }

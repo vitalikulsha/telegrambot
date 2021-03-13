@@ -7,6 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -37,16 +38,15 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(update.getMessage().getChatId());
-        sendMessage.setText(update.getMessage().getText());
+        //sendMessage.setText(update.getMessage().getText());
 
-        //keyboardButtonMessage.setButtons(sendMessage);
         SendMessage sendMessageService = messageService.onUpdateReceived(update);
         sendMessage.setReplyMarkup(keyboardButtonMessage.replyKeyboardMarkup);
-        //keyboardButtonMessage.getMessage(update.getMessage().getText());
-       try {
-            sendMessage.setText(keyboardButtonMessage.getMessage(update.getMessage().getText()));
+        sendMessage.setText(keyboardButtonMessage.getMessage(update.getMessage().getText()));
+        try {
+
             execute(sendMessage);
-            //execute(sendMessageService);
+
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
