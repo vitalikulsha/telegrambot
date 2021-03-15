@@ -7,10 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.github.vitalikulsha.telegrambot.util.DatabaseAdmin.*;
 import static io.github.vitalikulsha.telegrambot.util.TextMessageUtil.*;
@@ -31,7 +28,6 @@ public class KeyboardMessage {
     private String currentCommand;
 
     public String getMessage(Update update) {
-        //List<Ticket> ticketList = new ArrayList<>();
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow keyboardFirstRow = new KeyboardRow();
         KeyboardRow keyboardSecondRow = new KeyboardRow();
@@ -227,14 +223,14 @@ public class KeyboardMessage {
             keyboardFirstRow.add("Меню");
             keyboard.add(keyboardFirstRow);
             replyKeyboardMarkup.setKeyboard(keyboard);
-            currentCommand = "Введите пароль для доступа к меню администратора";
-            return currentCommand;
+            currentCommand = "password";
+            return "Введите пароль для доступа к меню администратора";
         }
 
         if (msg.equals(DatabaseAdmin.PASSWORD) || msg.equals("Меню администратора") && isAdmin) {
             password = msg;
             keyboard.clear();
-            keyboardFirstRow.add("Добавить рейс");
+            keyboardFirstRow.add("Новый рейс");
             keyboardFirstRow.add("Просмотр рейсов");
             keyboardSecondRow.add("Просмотр броней");
             keyboardSecondRow.add("Справка");
@@ -245,95 +241,49 @@ public class KeyboardMessage {
         }
 
         if (!msg.equals(DatabaseAdmin.PASSWORD) && password == null &&
-                currentCommand.equals("Введите пароль для доступа к меню администратора")) {
+                currentCommand.equals("password")) {
             return "Пароль введен неверно";
         }
 
-        if (password.equals(DatabaseAdmin.PASSWORD) && isAdmin) {
-            if (msg.equals("Справка")) {
-                return DatabaseAdmin.REFERENCE;
-            } else if (msg.equals("Добавить рейс")) {
-                currentCommand = "Введите данные о рейсе через пробел:\n" +
-                        "направление дата(DD-MM-YYYY) время(HH:MM) количество_мест";
-                return currentCommand;
-            } else if (msg.equals("Просмотр рейсов")) {
-                currentCommand = "Введите направление и дату рейса для просмотра информации";
-                return currentCommand;
-            } else if (msg.equals("Просмотр броней")) {
-                currentCommand = "Введите номер рейса для просмотра информации о забронированных билетах";
-                return currentCommand;
-            }
-
-            if (currentCommand.equals("Введите номер рейса для просмотра информации о забронированных билетах")) {
-                keyboard.clear();
-                keyboardFirstRow.add("Добавить рейс");
-                keyboardFirstRow.add("Просмотр рейсов");
-                keyboardSecondRow.add("Просмотр броней");
-                keyboardSecondRow.add("Справка");
-                keyboard.add(keyboardFirstRow);
-                keyboard.add(keyboardSecondRow);
-                replyKeyboardMarkup.setKeyboard(keyboard);
-                if (reserveTripSet.contains(msg)) {
-                    List<String> reserveList = reserveTripClientMap.get(msg);
-                    StringBuilder reserve = new StringBuilder("Список пассажиров на рейс " + msg + ":\n");
-                    if (reserveList.size() != 0) {
-                        for (int i = 0; i < reserveList.size(); i++) {
-                            reserve.append("\'" + i + "\' " + reserveList.get(i) + ";\n");
-                        }
-                        return reserve.toString();
-                    } else {
-                        return "Забронированных билетов нет";
-                    }
-                } else {
-                    return "Нет такого рейса";
-                }
-            }
-
-            if (currentCommand.equals("Введите направление и дату рейса для просмотра информации")) {
-                keyboard.clear();
-                keyboardFirstRow.add("Добавить рейс");
-                keyboardFirstRow.add("Просмотр рейсов");
-                keyboardSecondRow.add("Просмотр броней");
-                keyboardSecondRow.add("Справка");
-                keyboard.add(keyboardFirstRow);
-                keyboard.add(keyboardSecondRow);
-                replyKeyboardMarkup.setKeyboard(keyboard);
-                if (tripSet.contains(msg)) {
-                    List<String> trip = tripClientMap.get(msg);
-                    String[] strArr = msg.split(" ");
-                    StringBuilder freePlace = new StringBuilder("Информация о рейсе " + strArr[0] +
-                            " на дату " + strArr[1] + ":\n");
-                    if (trip.size() != 0) {
-                        for (int i = 0; i < trip.size(); i++) {
-                            freePlace.append("\'" + i + "\' " + trip.get(i) + ";\n");
-                        }
-                        return freePlace.toString();
-                    } else {
-                        return "Свободных мест нет";
-                    }
-                } else {
-                    return "Нет такого рейса";
-                }
-            }
-
-            if (currentCommand.equals("Введите данные о рейсе через пробел:\n" +
-                    "направление дата(DD-MM-YYYY) время(HH:MM) количество_мест")) {
-                keyboard.clear();
-                keyboardFirstRow.add("Добавить рейс");
-                keyboardFirstRow.add("Просмотр рейсов");
-                keyboardSecondRow.add("Просмотр броней");
-                keyboardSecondRow.add("Справка");
-                keyboard.add(keyboardFirstRow);
-                keyboard.add(keyboardSecondRow);
-                replyKeyboardMarkup.setKeyboard(keyboard);
-                String[] strArr = msg.split(" ");
-                if (strArr.length == 4 && strArr[1].length() == 10 && strArr[2].length() == 5) {
-                    return "Рейс " + msg + " добавлен";
-                } else {
-                    return "Рейс введен некорректно";
-                }
-            }
+        if (msg.equals("Справка")) {
+            return DatabaseAdmin.REFERENCE;
         }
+
+        if (msg.equals("Новый рейс")) {
+            return "Введите данные о рейсе через пробел";
+        }
+
+        if (msg.equals("Просмотр рейсов")) {
+            keyboardFirstRow.add(tripDataList.get(0));
+            keyboardFirstRow.add(tripDataList.get(1));
+            keyboardSecondRow.add(tripDataList.get(2));
+            keyboardSecondRow.add(tripDataList.get(3));
+            keyboard.add(keyboardFirstRow);
+            keyboard.add(keyboardSecondRow);
+            replyKeyboardMarkup.setKeyboard(keyboard);
+            return "Введите дату рейса для просмотра информации";
+        }
+
+        if (msg.equals("Просмотр броней")) {
+            return "Введите номер рейса для просмотра информации о забронированных билетах";
+        }
+
+        if (tripDataList.contains(msg)) {
+            StringBuilder str = new StringBuilder();
+            for (int i = 0; i < tripDataList.size(); i++) {
+                if (msg.equals(tripDataList.get(i))) {
+                    List<String> trip = tripClientMap.get(tripDataList.get(i));
+                    for (int j = 0; j < trip.size(); j++) {
+                        str.append(trip.get(j) + "\n");
+                    }
+                }
+            }
+            keyboardFirstRow.add("Меню администратора");
+            keyboard.add(keyboardFirstRow);
+            replyKeyboardMarkup.setKeyboard(keyboard);
+            return str.toString();
+        }
+
         return "Я тебя не понял, попробуй еще раз!";
     }
 }
