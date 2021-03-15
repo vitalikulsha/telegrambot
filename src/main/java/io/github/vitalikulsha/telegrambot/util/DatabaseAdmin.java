@@ -6,6 +6,10 @@ import java.util.regex.Pattern;
 
 public class DatabaseAdmin {
   protected static final String PASSWORD = "adminpassword";
+  public static final String REFERENCE = "Возможности меню администратора:\n"+
+    "Добавление рейса - добавить новый рейс с количеством билетов\n"+
+    "Просмотр рейсов - просмотр рейсов на заданную дату и направление, выводит информацию о времени отправления и количестве свободных мест\n"+
+    "Просмотр броней - просмотр данных клиентов (номер телефона и имя), забронировавших билеты на заданный рейс.\n";
   
   public static Set<String> reserveTripSet = new HashSet<>() {
         {
