@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class KeyBoardMessage {
+public class Keyboard {
     public SendMessage sendInlineKeyBoardMessage(long chatId) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         InlineKeyboardButton buttonReserve = new InlineKeyboardButton();

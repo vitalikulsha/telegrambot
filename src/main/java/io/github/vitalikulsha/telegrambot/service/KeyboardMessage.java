@@ -12,10 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.vitalikulsha.telegrambot.util.DatabaseAdmin.*;
 import static io.github.vitalikulsha.telegrambot.util.TextMessageUtil.*;
 
 @Service
-public class KeyboardClientMessage {
+public class KeyboardMessage {
     ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
     private String selectMenu = "Выбери из предложенного меню.\u2B07";
     Map<Long, List<Ticket>> ticketsUser = new HashMap<>();
@@ -226,6 +227,7 @@ public class KeyboardClientMessage {
         }
 
         if (msg.equals(DatabaseAdmin.PASSWORD)) {
+            password = msg;
             keyboard.clear();
             keyboardFirstRow.add("Добавить рейс");
             keyboardFirstRow.add("Просмотр рейсов");
@@ -237,18 +239,34 @@ public class KeyboardClientMessage {
             return selectMenu;
         }
 
-        if (msg.equals("Справка")) {
-            return DatabaseAdmin.REFERENCE;
-        } else if (msg.equals("Добавить рейс")) {
-            return "Введите данные о рейсе через пробел:\n" +
-                    "направление дата(DD-MM-YYYY) время(HH:MM) количество_мест";
-        } else if (msg.equals("Просмотр рейсов")) {
-            return "Введите направление и дату рейса для просмотра информации";
-        } else if (msg.equals("Просмотр броней")) {
-            return "Введите номер рейса для просмотра информации о забронированных билетах";
+        if (password.equals(DatabaseAdmin.PASSWORD)) {
+            if (msg.equals("Справка")) {
+                return DatabaseAdmin.REFERENCE;
+            } else if (msg.equals("Добавить рейс")) {
+                return "Введите данные о рейсе через пробел:\n" +
+                        "направление дата(DD-MM-YYYY) время(HH:MM) количество_мест";
+            } else if (msg.equals("Просмотр рейсов")) {
+                return "Введите направление и дату рейса для просмотра информации";
+            } else if (msg.equals("Просмотр броней")) {
+                return "Введите номер рейса для просмотра информации о забронированных билетах";
+            }
+            if (reserveTripSet.contains(msg)) {
+                List<String> reserveList = reserveTripClientMap.get(msg);
+                StringBuilder reserve = new StringBuilder("Список пассажиров на рейс " + msg + ":\n");
+                keyboard.clear();
+                keyboardFirstRow.add("Меню");
+                keyboard.add(keyboardFirstRow);
+                replyKeyboardMarkup.setKeyboard(keyboard);
+                if (reserveList.size() != 0) {
+                    for (int i = 0; i < reserveList.size(); i++) {
+                        reserve.append("\'" + i + "\'+" + reserveList.get(i) + ";\n");
+                    }
+                    return reserve.toString();
+                } else {
+                    return "Забронированных билетов нет";
+                }
+            }
         }
-
-
 
 
         return "Я тебя не понял, попробуй еще раз!";

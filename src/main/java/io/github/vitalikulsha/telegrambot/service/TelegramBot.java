@@ -25,7 +25,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     ObjectMapper objectMapper;
 
     @Autowired
-    KeyboardClientMessage keyboardClientMessage;
+    KeyboardMessage keyboardMessage;
 
 
     @Override
@@ -36,8 +36,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendMessage.setChatId(update.getMessage().getChatId());
 
         //SendMessage sendMessageService = messageService.onUpdateReceived(update);
-        sendMessage.setReplyMarkup(keyboardClientMessage.replyKeyboardMarkup);
-        sendMessage.setText(keyboardClientMessage.getMessage(update));
+        sendMessage.setReplyMarkup(keyboardMessage.replyKeyboardMarkup);
+        sendMessage.setText(keyboardMessage.getMessage(update));
 
         try {
 

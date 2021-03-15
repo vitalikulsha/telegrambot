@@ -1,16 +1,10 @@
 package io.github.vitalikulsha.telegrambot.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.vitalikulsha.telegrambot.TelegrambotApplication;
 import io.github.vitalikulsha.telegrambot.TelegrambotApplicationTests;
-import io.github.vitalikulsha.telegrambot.config.Mapper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +20,7 @@ class MessageServiceTest extends TelegrambotApplicationTests {
     @Autowired
     MessageService messageService;
     @Autowired
-    KeyBoardMessage keyBoardMessage;
+    Keyboard keyboard;
 
     //@Test
     void onUnknownReceived() throws IOException {

@@ -9,9 +9,9 @@ import org.telegram.telegrambots.ApiContextInitializer;
 @SpringBootApplication
 public class TelegrambotApplication {
 
-	public static void main(String[] args) {
-		ApiContextInitializer.init();
-		SpringApplication.run(TelegrambotApplication.class, args);
-	}
+    public static void main(String[] args) {
+        ApiContextInitializer.init();
+        SpringApplication.run(TelegrambotApplication.class, args);
+    }
 
 }
