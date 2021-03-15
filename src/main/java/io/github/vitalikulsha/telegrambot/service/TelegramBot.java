@@ -7,8 +7,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Contact;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -25,12 +23,10 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Autowired
     ObjectMapper objectMapper;
+
     @Autowired
-    MessageService messageService;
-    @Autowired
-    KeyBoardMessage keyBoardMessage;
-    @Autowired
-    KeyboardButtonMessage keyboardButtonMessage;
+    KeyboardClientMessage keyboardClientMessage;
+
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -40,8 +36,9 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendMessage.setChatId(update.getMessage().getChatId());
 
         //SendMessage sendMessageService = messageService.onUpdateReceived(update);
-        sendMessage.setReplyMarkup(keyboardButtonMessage.replyKeyboardMarkup);
-        sendMessage.setText(keyboardButtonMessage.getMessage(update));
+        sendMessage.setReplyMarkup(keyboardClientMessage.replyKeyboardMarkup);
+        sendMessage.setText(keyboardClientMessage.getMessage(update));
+
         try {
 
             execute(sendMessage);

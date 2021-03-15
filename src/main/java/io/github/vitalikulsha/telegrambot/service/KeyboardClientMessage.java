@@ -1,27 +1,23 @@
 package io.github.vitalikulsha.telegrambot.service;
 
+import io.github.vitalikulsha.telegrambot.util.DatabaseAdmin;
 import io.github.vitalikulsha.telegrambot.util.Ticket;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.*;
-
-import org.telegram.telegrambots.meta.api.objects.Message;
 
 import static io.github.vitalikulsha.telegrambot.util.TextMessageUtil.*;
 
 @Service
-public class KeyboardButtonMessage {
+public class KeyboardClientMessage {
     ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-    private String string = "Выбери из предложенного меню.\u2B07";
+    private String selectMenu = "Выбери из предложенного меню.\u2B07";
     Map<Long, List<Ticket>> ticketsUser = new HashMap<>();
     List<Ticket> ticketList = new ArrayList<>();
     private String route;
@@ -29,7 +25,7 @@ public class KeyboardButtonMessage {
     private String time;
     private String numberPhone;
     private long chatId;
-
+    private String password = null;
 
     public String getMessage(Update update) {
         //List<Ticket> ticketList = new ArrayList<>();
@@ -57,7 +53,7 @@ public class KeyboardButtonMessage {
             keyboard.add(keyboardSecondRow);
             keyboard.add(keyboardRequestRow);
             replyKeyboardMarkup.setKeyboard(keyboard);
-            return string;
+            return selectMenu;
         }
 
         if (msg.equals("Отправить контакт")) {
@@ -85,7 +81,7 @@ public class KeyboardButtonMessage {
                     keyboard.add(keyboardFirstRow);
                     keyboard.add(keyboardSecondRow);
                     replyKeyboardMarkup.setKeyboard(keyboard);
-                    return string;
+                    return selectMenu;
                 }
             } else {
                 keyboardFirstRow.add("Меню");
@@ -218,12 +214,42 @@ public class KeyboardButtonMessage {
         }
 
         if (msg.equals("Помощь")) {
+            return HELP;
+        }
+        //Меню администратора
+        if (msg.equals("/startadmin")) {
             keyboard.clear();
             keyboardFirstRow.add("Меню");
             keyboard.add(keyboardFirstRow);
             replyKeyboardMarkup.setKeyboard(keyboard);
-            return HELP;
+            return "Введите пароль для доступа к меню администратора";
         }
+
+        if (msg.equals(DatabaseAdmin.PASSWORD)) {
+            keyboard.clear();
+            keyboardFirstRow.add("Добавить рейс");
+            keyboardFirstRow.add("Просмотр рейсов");
+            keyboardSecondRow.add("Просмотр броней");
+            keyboardSecondRow.add("Справка");
+            keyboard.add(keyboardFirstRow);
+            keyboard.add(keyboardSecondRow);
+            replyKeyboardMarkup.setKeyboard(keyboard);
+            return selectMenu;
+        }
+
+        if (msg.equals("Справка")) {
+            return DatabaseAdmin.REFERENCE;
+        } else if (msg.equals("Добавить рейс")) {
+            return "Введите данные о рейсе через пробел:\n" +
+                    "направление дата(DD-MM-YYYY) время(HH:MM) количество_мест";
+        } else if (msg.equals("Просмотр рейсов")) {
+            return "Введите направление и дату рейса для просмотра информации";
+        } else if (msg.equals("Просмотр броней")) {
+            return "Введите номер рейса для просмотра информации о забронированных билетах";
+        }
+
+
+
 
         return "Я тебя не понял, попробуй еще раз!";
     }
