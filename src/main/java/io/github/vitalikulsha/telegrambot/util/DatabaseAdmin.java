@@ -79,4 +79,25 @@ public class DatabaseAdmin {
         }
     };
   
+    public static Map<String, List<String>> tripKlientMap = new HashMap<>(){
+    {
+      this.put("Мн-Мг 08-03-2021", new ArrayList<>(){
+        {
+          this.add("10:20 свободно 15");
+          this.add("12:30 свободно 12");
+          this.add("14:40 свободно 11");
+          this.add("16:50 свободно 14");
+        }
+      };)
+        this.put("Мн-Мг 08-03-2021", new ArrayList<>(){
+        {
+          this.add("08:10 свободно 8");
+          this.add("11:15 свободно 10");
+          this.add("13:10 свободно 12");
+          this.add("18:40 свободно 9");
+        }
+      };)
+    }
+  };
+  
 }
