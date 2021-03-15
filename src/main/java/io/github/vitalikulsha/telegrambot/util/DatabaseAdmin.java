@@ -48,15 +48,15 @@ public class DatabaseAdmin {
     {
       this.put("МнМг0803211020", new ArrayList<>(){
         {
-          this.add(+375291234567);
-          this.add(+375331111111);
+          this.add("+375291234567 Светлана");
+          this.add("+375331111111 Пётр");
         }
       };)
         this.put("МгМн0803210810", new ArrayList<>(){
         {
-          this.add(+375290000000);
-          this.add(+375332222222);
-          this.add(+375333333333);
+          this.add("+375290000000 Сергей");
+          this.add("+375332222222 Антон");
+          this.add("+375333333333 Иван");
         }
       };)
     }
