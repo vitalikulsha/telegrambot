@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class DatabaseAdmin {
   protected static final String PASSWORD = "adminpassword";
   
-  public static Set<String> tripReserveSet = new HashSet<>() {
+  public static Set<String> reserveTripSet = new HashSet<>() {
         {
             this.add("МнМг0803211020");
             this.add("МнМг0803211230");
@@ -43,4 +43,22 @@ public class DatabaseAdmin {
             this.add("МгМн1103211840");          
         }
     };
+  
+  public static Map<String, List<String>> reserveTripKlientMap = new HashMap<>(){
+    {
+      this.put("МнМг0803211020", new ArrayList<>(){
+        {
+          this.add(+375291234567);
+          this.add(+375331111111);
+        }
+      };)
+        this.put("МгМн0803210810", new ArrayList<>(){
+        {
+          this.add(+375290000000);
+          this.add(+375332222222);
+          this.add(+375333333333);
+        }
+      };)
+    }
+  };
 }
