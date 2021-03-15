@@ -4,5 +4,5 @@ import java.util.Objects;
 
 public class Trip {
     private Ticket ticket;
-    private int numberTicket;
+    private int numberFreeTickets;
 }
