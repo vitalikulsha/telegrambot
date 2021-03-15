@@ -65,4 +65,18 @@ public class DatabaseAdmin {
       };)
     }
   };
+  
+   public static Set<String> tripSet = new HashSet<>() {
+        {
+            this.add("Мн-Мг 08-03-2021");
+            this.add("Мн-Мг 09-03-2021");
+            this.add("Мн-Мг 10-03-2021");
+            this.add("Мн-Мг 11-03-2021");
+            this.add("Мг-Мн 08-03-2021");
+            this.add("Мг-Мн 09-03-2021");
+            this.add("Мг-Мн 10-03-2021");
+            this.add("Мг-Мн 11-03-2021");
+        }
+    };
+  
 }
