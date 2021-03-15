@@ -2,7 +2,6 @@ package io.github.vitalikulsha.telegrambot.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class TextMessageUtil {
     public static final String HELP = "Чат-бот поможет тебе заказать билет на маршрутку.\n" +
@@ -11,8 +10,6 @@ public class TextMessageUtil {
             "- отменить ранее заказанные билеты.\n" +
             "Билет можно заказать только после регистрации.";
     public static final String SETTINGS = "В будущем здесь будет что-то полезное.";
-
-    Pattern pattern = Pattern.compile("");
 
     public static List<String> routeList = new ArrayList<>() {
         {
